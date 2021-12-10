@@ -1,0 +1,5 @@
+HOMEPAGE_URL = 'https://www.linkedin.com'
+LOGIN_URL = 'https://www.linkedin.com/lg/login-submit'
+LINKEDIN_LOGIN_URL='https://www.linkedin.com/login?'
+base_job_url = 'https://www.linkedin.com/jobs/search/?keywords='
+BASE_URL_FOR_SEARCH='https://www.linkedin.com/jobs/search/'

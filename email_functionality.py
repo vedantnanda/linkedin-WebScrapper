@@ -6,16 +6,16 @@ from email import encoders
 from config import *
 
 # The mail addresses and password
-sender_address = gmail_address
-sender_pass = gmail_password
-receiver_address = receiver_address
-
+# sender_address = gmail_address
+# sender_pass = gmail_password
+# receiver_address = receiver_address
+#gmail_port_number=gmail_port_number
 # from email.message import EmailMessage
 def send_email(timestamp: str, actual_filename: str) -> str:
     try:
         #Setup the MIME
         message = MIMEMultipart()
-        message['From'] = sender_address
+        message['From'] = gmail_address
         message['To'] = receiver_address
         message['Subject'] = 'The required job list created at '+ timestamp   #The subject line
         message.attach(MIMEText('Please find attached excel with jobs!', 'plain'))
@@ -28,11 +28,11 @@ def send_email(timestamp: str, actual_filename: str) -> str:
         message.attach(part)
 
         #Create SMTP session for sending the mail
-        session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+        session = smtplib.SMTP('smtp.gmail.com', gmail_port_number) #use gmail with port
         session.starttls() #enable security
-        session.login(sender_address, sender_pass) #login with mail_id and password
-        session.sendmail(sender_address, receiver_address, message.as_string())
+        session.login(gmail_address, gmail_password) #login with mail_id and password
+        session.sendmail(gmail_address, receiver_address, message.as_string())
         session.quit()
         return 'Mail Sent'
     except Exception:
-        return 'Mail not sent'
+        return 'Mail not sent '+Exception

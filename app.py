@@ -7,17 +7,15 @@ import datetime
 from email_functionality import *
 import os
 import time
-
+import lxml
 start_time = time.time()
 email = linkedin_email
 password = linkedin_password
 
 client = requests.Session()
 
-HOMEPAGE_URL = 'https://www.linkedin.com'
-LOGIN_URL = 'https://www.linkedin.com/lg/login-submit'
 
-html = client.get('https://www.linkedin.com/login?').content
+html = client.get(LINKEDIN_LOGIN_URL).content
 soup = BeautifulSoup(html, "html.parser")
 csrf = soup.find('input', {'name': 'loginCsrfParam'}).get('value')
 
@@ -28,7 +26,7 @@ login_information = {
     'trk': 'guest_homepage-basic_sign-in-submit'
 }
 client.post(LOGIN_URL, data=login_information)
-feed_response = client.get('https://www.linkedin.com/feed').text
+#feed_response = client.get('https://www.linkedin.com/feed').text
 
 def fetch_data(search_url: str) -> list:
     result = []
@@ -44,14 +42,13 @@ def fetch_data(search_url: str) -> list:
         result.append(splitted)
 
     return result
-base_job_url = 'https://www.linkedin.com/jobs/search/?keywords='
 
-def get_jobs(pages: int, params: str, location: str) -> list:
-    if pages < 1 or len(params) == 0:
+def get_jobs_by_jobrole_skillset_location(pages: int, jobrole_skillset: str, location: str) -> list:
+    if pages < 1 or len(jobrole_skillset) == 0:
         return []
     res = []
     url = base_job_url
-    for val in params.split():
+    for val in jobrole_skillset.split():
         url += val + '%20'
     url = url[:-3]
     if location != "":
@@ -75,7 +72,7 @@ def get_jobs_with_exp(pages: int, params: str, location: str, exp: list) -> list
     if pages < 1 or len(params) == 0 or len(exp) == 0:
         return []
     exp.sort()
-    base_url = 'https://www.linkedin.com/jobs/search/'
+    base_url = BASE_URL_FOR_SEARCH
     url = base_url+'?f_E='
     for e in exp:
         if e < 1 or e > 5:
@@ -100,23 +97,33 @@ def get_jobs_with_exp(pages: int, params: str, location: str, exp: list) -> list
         for job in jobs_per_page:
             res.append(job)
 
-    for each_res in res:
-        print(each_res)
+    # for each_res in res:
+    #     print(each_res)
     return res
 
-jobs = get_jobs(6,"associate consultant","hyderabad")
+
+
+
+jobs = get_jobs_by_jobrole_skillset_location(NUMBER_OF_PAGES, JOB_ROLE, LOCATION)
 # get_jobs(2,"python", "noida india")
 # get_jobs_with_exp(1,"associate consultant","hyderabad",[1])
 # get_jobs_with_exp(1,"associate consultantr","noida india",[1,2,3])
-
+#Get jobs with exp
+#Get jobs with
 x = datetime.datetime.now()
 timestamp = x.strftime("%d-%m-%Y %H-%M-%S")
 file_name = 'Jobs list '+timestamp+'.xlsx'
 
-df = pd.DataFrame(jobs,columns=['Role name', 'Company','Location','Description','Hiring Status','Post Date','Job Link',''])
-writer = ExcelWriter(file_name)
-df.to_excel(writer,'Sheet1',index=False)
-writer.save()
+
+def save_file(jobs,file_name):
+    df = pd.DataFrame(jobs, columns=['Role name', 'Company', 'Location', 'Description', 'Hiring Status', 'Post Date',
+                                     'Job Link', ''])
+    writer = ExcelWriter(file_name)
+    df.to_excel(writer, 'List Of Jobs', index=False)
+    writer.save()
+
+
+save_file(jobs,file_name)
 
 email_status = send_email(timestamp, file_name)
 print(email_status)
