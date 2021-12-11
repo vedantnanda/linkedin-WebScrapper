@@ -7,7 +7,9 @@ import datetime
 from email_functionality import *
 import os
 import time
+from constants import *
 import lxml
+
 start_time = time.time()
 email = linkedin_email
 password = linkedin_password
@@ -43,6 +45,14 @@ def fetch_data(search_url: str) -> list:
 
     return result
 
+def add_location_to_url(url: str, location: str) -> str:
+    if location != "":
+        url += '&location='
+        for item in location.split():
+            url += item + '%2C%20'
+        url = url[:-6]
+    return url
+
 def get_jobs_by_jobrole_skillset_location(pages: int, jobrole_skillset: str, location: str) -> list:
     if pages < 1 or len(jobrole_skillset) == 0:
         return []
@@ -51,20 +61,13 @@ def get_jobs_by_jobrole_skillset_location(pages: int, jobrole_skillset: str, loc
     for val in jobrole_skillset.split():
         url += val + '%20'
     url = url[:-3]
-    if location != "":
-        url += '&location='
-        for item in location.split():
-            url += item + '%2C%20'
-        url = url[:-6]
+    url = add_location_to_url(url, location)
     for i in range(0,pages*25,25):
         search_url = url + '&start='+str(i)
         jobs_per_page = fetch_data(search_url)
 
         for job in jobs_per_page:
             res.append(job)
-
-    # for each_res in res:
-    #     print(each_res)
     return res
 
 
@@ -84,21 +87,13 @@ def get_jobs_with_exp(pages: int, params: str, location: str, exp: list) -> list
         url += val + '%20'
     url = url[:-3]
 
-    if location != "":
-        url += '&location='
-        for item in location.split():
-            url += item + '%2C%20'
-        url = url[:-6]
-    print(url)
+    url = add_location_to_url(url, location)
     for i in range(0,pages*25,25):
         search_url = url + '&start='+str(i)
         jobs_per_page = fetch_data(search_url)
 
         for job in jobs_per_page:
             res.append(job)
-
-    # for each_res in res:
-    #     print(each_res)
     return res
 
 
@@ -108,8 +103,7 @@ jobs = get_jobs_by_jobrole_skillset_location(NUMBER_OF_PAGES, JOB_ROLE, LOCATION
 # get_jobs(2,"python", "noida india")
 # get_jobs_with_exp(1,"associate consultant","hyderabad",[1])
 # get_jobs_with_exp(1,"associate consultantr","noida india",[1,2,3])
-#Get jobs with exp
-#Get jobs with
+
 x = datetime.datetime.now()
 timestamp = x.strftime("%d-%m-%Y %H-%M-%S")
 file_name = 'Jobs list '+timestamp+'.xlsx'
@@ -119,8 +113,9 @@ def save_file(jobs,file_name):
     df = pd.DataFrame(jobs, columns=['Role name', 'Company', 'Location', 'Description', 'Hiring Status', 'Post Date',
                                      'Job Link', ''])
     writer = ExcelWriter(file_name)
-    df.to_excel(writer, 'List Of Jobs', index=False)
+    df.to_excel(writer, 'List_Of_Jobs', index=False)
     writer.save()
+
 
 
 save_file(jobs,file_name)

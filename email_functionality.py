@@ -28,11 +28,11 @@ def send_email(timestamp: str, actual_filename: str) -> str:
         message.attach(part)
 
         #Create SMTP session for sending the mail
-        session = smtplib.SMTP('smtp.gmail.com', gmail_port_number) #use gmail with port
+        session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
         session.starttls() #enable security
         session.login(gmail_address, gmail_password) #login with mail_id and password
         session.sendmail(gmail_address, receiver_address, message.as_string())
         session.quit()
         return 'Mail Sent'
     except Exception:
-        return 'Mail not sent '+Exception
+        return 'Mail not sent '

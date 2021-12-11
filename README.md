@@ -22,3 +22,8 @@ gmail_address = ""
 gmail_password = ""
 
 receiver_address = ""
+
+####Modify below variables are required
+NUMBER_OF_PAGES = "5"
+JOB_ROLE = "Associate consultant"
+LOCATION = "Hyderabad"
