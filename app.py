@@ -110,7 +110,7 @@ file_name = 'Jobs list '+timestamp+'.xlsx'
 
 
 def save_file(jobs,file_name):
-    df = pd.DataFrame(jobs, columns=['Role name', 'Company', 'Location', 'Description', 'Hiring Status', 'Post Date',
+    df = pd.DataFrame(jobs, columns=['Role name', 'Company', 'Location', 'Hiring Status', 'Description', 'Post Date',
                                      'Job Link', ''])
     writer = ExcelWriter(file_name)
     df.to_excel(writer, 'List_Of_Jobs', index=False)
@@ -123,5 +123,5 @@ save_file(jobs,file_name)
 email_status = send_email(timestamp, file_name)
 print(email_status)
 
-os.remove(file_name)
+# os.remove(file_name)
 print("---Time taken for execution: %s seconds ---" % (time.time() - start_time))
