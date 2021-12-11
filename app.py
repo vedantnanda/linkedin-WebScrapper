@@ -118,10 +118,10 @@ def save_file(jobs,file_name):
 
 
 
-save_file(jobs,file_name)
+save_file(jobs,file_name) #craetes the required excel file
 
 email_status = send_email(timestamp, file_name)
 print(email_status)
 
-# os.remove(file_name)
+os.remove(file_name) #deletes file that is created after email is sent
 print("---Time taken for execution: %s seconds ---" % (time.time() - start_time))
