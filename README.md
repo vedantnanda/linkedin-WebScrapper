@@ -8,6 +8,7 @@ Features:
 * Search job as per role name/skill set + location
 * Search job as per role name/skill set + location + experience level
 * Send fetched results in excel to desired gmail account
+
 Further scope of this project is to deploy the solution to Azure function which will auto trigger at a specific time each day.
 
 ### Snapshot of generated excel
